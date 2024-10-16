@@ -22,4 +22,3 @@ DB_PASSWORD: str = getenv("DB_PASSWORD", "123")
 
 # admin login whitelist
 ADMINS: list[str] = getenv("ADMINS")
-

@@ -1,26 +1,40 @@
 from typing import Union
 
 from aiogram import types
-from aiogram.dispatcher.filters import Filter
+from aiogram.filters import Filter
+from django.contrib.auth import get_user_model
 
-from tg_bot.models.User import Role
-from tg_bot.services.UserService import user_service
+User = get_user_model()
+
+
+def create_user_by_message(message: types.Message, role=User.Role.ANONIM):
+    try:
+        return User.objects.create(
+            tg_id=message.from_user.id,
+            username=message.from_user.username,
+            name=message.from_user.first_name,
+            surname=message.from_user.last_name,
+            role=role,
+        )
+    except:
+        return None
 
 
 class AnyUserFilter(Filter):
     async def check(self, message: types.Message) -> bool:
-        user = user_service.create_user_without_phone_by_message_if_doesnt_exist(message)
+        user = create_user_by_message(message)
         return user is not None
 
-class CustomUserFilter(Filter):
-    available: Union[Role, list]
 
-    def __init__(self, available: Union[Role, list]):
+class CustomUserFilter(Filter):
+    available: Union[User.Role, list]
+
+    def __init__(self, available: Union[User.Role, list]):
         self.available = available
 
     async def check(self, message: types.Message) -> bool:
-        user = user_service.create_user_without_phone_by_message_if_doesnt_exist(message)
-        if isinstance(self.available, Role):
+        user = create_user_by_message(message)
+        if isinstance(self.available, User.Role):
             return user.role == self.available
         else:
             return user.role in self.available
@@ -28,5 +42,5 @@ class CustomUserFilter(Filter):
 
 class NotAnonimUserFilter(Filter):
     async def check(self, message: types.Message) -> bool:
-        user = user_service.create_user_without_phone_by_message_if_doesnt_exist(message)
-        return user is not None and user.role != Role.INCOGNITA
+        user = create_user_by_message(message)
+        return user is not None and user.role != User.Role.ANONIM
