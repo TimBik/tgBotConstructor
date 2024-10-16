@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from core.models import BotMessage, InlineMessage, InlineButton
+from core.models import BotMessage, InlineMessage, InlineButton, CustomUser
 
 
 @admin.register(BotMessage)
@@ -14,4 +14,8 @@ class InlineMessageAdmin(admin.ModelAdmin):
 
 @admin.register(InlineButton)
 class InlineButtonAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(CustomUser)
+class CustomUserAdmin(admin.ModelAdmin):
     pass

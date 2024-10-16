@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
@@ -23,10 +24,13 @@ class InlineButton(models.Model):
         verbose_name = "инлайн кнопка"
         verbose_name_plural = "инлайн кнопки"
 
+
 class InlineMessage(models.Model):
-    # image = models.ImageField(
-    #     upload_to=''
-    # )
+    image = models.ImageField(
+        upload_to='images/inline_messages',
+        null=True,
+        blank=True,
+    )
     created = models.DateTimeField(
         auto_now_add=True,
         verbose_name="создано"
@@ -46,12 +50,16 @@ class BotMessage(models.Model):
         max_length=2048,
         verbose_name="текст"
     )
-    # image = models.ImageField(
-    #     upload_to=''
-    # )
-    # file = models.FileField(
-    #
-    # )
+    image = models.ImageField(
+        upload_to='images/bot_messages',
+        null=True,
+        blank=True,
+    )
+    file = models.FileField(
+        upload_to='files/bot_messages',
+        null=True,
+        blank=True,
+    )
     created = models.DateTimeField(
         auto_now_add=True,
         verbose_name="создано"
@@ -64,3 +72,24 @@ class BotMessage(models.Model):
     class Meta:
         verbose_name = "сообщение бота"
         verbose_name_plural = "сообщения бота"
+
+class CustomUser(AbstractUser):
+    class Role(models.TextChoices):
+        AUTHORIZED = 'AUTHORIZED'
+        ADMIN = 'ADMIN'
+        ANONIM = 'ANONIM'
+
+    tg_id = models.BigIntegerField(
+        unique=True,
+        verbose_name="id из тг",
+    )
+    role = models.CharField(
+        max_length=20,
+        choices=Role,
+        default=Role.ANONIM,
+        verbose_name="роль пользователя"
+    )
+
+    class Meta:
+        verbose_name = "пользователь"
+        verbose_name_plural = "пользователи"

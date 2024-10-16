@@ -1,1 +1,6 @@
 psycopg2==2.9.9
+Pillow==10.4.0
+aiogram==3.13.1
+python-dotenv==1.0.1
+StrEnum==0.4.15
+Django==5.1.2
