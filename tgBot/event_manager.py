@@ -1,4 +1,5 @@
 from aiogram import types
+from aiogram.types import FSInputFile
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from asgiref.sync import sync_to_async
 
@@ -12,10 +13,19 @@ from tgBot.app import bot
 # }
 
 async def send_bot_message(chat_id, message: BotMessage):
-    await bot.send_message(
-        chat_id=chat_id,
-        text=message.text,
-    )
+    photo = await sync_to_async(lambda: message.image)()
+    if photo:
+        await bot.send_photo(
+            chat_id=chat_id,
+            caption=message.text,
+            photo=FSInputFile(f"{photo.name}")
+        )
+    else:
+        await bot.send_message(
+            chat_id=chat_id,
+            text=message.text,
+        )
+
 
 
 async def send_inline_message(chat_id, message: InlineMessage):
@@ -28,11 +38,20 @@ async def send_inline_message(chat_id, message: InlineMessage):
             text=await sync_to_async(lambda: button.text)(),
             callback_data=f"inline_button_{button.id}"
         ))
-    await bot.send_message(
-        chat_id=chat_id,
-        text=await sync_to_async(lambda: message.text)(),
-        reply_markup=builder.as_markup()
-    )
+    photo = await sync_to_async(lambda: message.image)()
+    if photo:
+        await bot.send_photo(
+            chat_id=chat_id,
+            caption=message.text,
+            reply_markup=builder.as_markup(),
+            photo=FSInputFile(f"{photo.name}")
+        )
+    else:
+        await bot.send_message(
+            chat_id=chat_id,
+            text=message.text,
+            reply_markup=builder.as_markup(),
+        )
 
 
 async def send_message(chat_id, message: Message):
@@ -46,5 +65,7 @@ async def run_events(chat_id, events: list[TgEvent]):
     if not events:
         return
     for event in events:
+        if not event:
+            continue
         message = await sync_to_async(lambda: Message.objects.select_subclasses().get(id=event.message.id))()
         await send_message(chat_id, message)
