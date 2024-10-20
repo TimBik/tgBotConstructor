@@ -1,39 +1,47 @@
-from aiogram import types
-from aiogram.enums import ChatType
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import Command
+from asgiref.sync import sync_to_async
 from django.contrib.auth import get_user_model
 
+from core.models import TgEvent, TgEventType, Role
 from tgBot.app import bot
-from tgBot.filters.access_rights_filters import AnyUserFilter
-from project_settings import ADMINS
+from tgBot.event_manager import run_events
 from aiogram import types
 
 from tgBot.app import dp
 
-
 User = get_user_model()
 
 
-# @dp.message(CommandStart(), AnyUserFilter(), state='*', chat_type=ChatType.PRIVATE)
-# async def cmd_start(message: types.Message):
-#     user_tg_id = message.from_user.id
-#     user = User.objects.get(tg_id=user_tg_id)
-#     if user.role != User.Role.ADMIN and user.username in ADMINS:
-#         user.role = User.Role.ADMIN
-#         user.save(update_fields=['role'])
-#     if user.role == User.Role.ADMIN:
-#         await bot.send_message(chat_id=user_tg_id, text=f"Приветствую админа {user.username}")
-#         await bot.send_message(chat_id=user_tg_id, text=f"я подписал вас на рассылку бота")
-#
-#     if not (" " in message.text and message.text.split()[1] == "by_qr"):
-#         bot.send_message(chat_id=user_tg_id, text="Я отвечаю только тем кто пришел ко мне по QR-коду с колоды")
-#         return
-#
-#     bot.send_message(chat_id=user_tg_id,
-#                      text="Приветсвую! Я бот-помощник к вашей колоде) Скоро у меня появится много нового функционала")
-#
-#
+async def get_or_create_user(message: types.Message):
+    user, _ = await sync_to_async(User.objects.get_or_create)(
+        tg_id=message.from_user.id,
+        defaults={
+            "tg_id": message.from_user.id,
+            "username": message.from_user.username,
+            "first_name": message.from_user.first_name,
+            "last_name": message.from_user.last_name,
+            "role": Role.AUTHORIZED,
+        }
+    )
+    return user
 
-@dp.message(Command("start"))
+
+@dp.message(Command('start'))
 async def cmd_start(message: types.Message):
-    await message.answer("Hello!")
+    user_tg_id = message.from_user.id
+    user = await get_or_create_user(message)
+    if user.role == Role.ADMIN:
+        await bot.send_message(chat_id=user_tg_id, text=f"Приветствую админа {user.username}")
+        return
+    if not (" " in message.text and message.text.split()[1] == "by_qr"):
+        await bot.send_message(chat_id=user_tg_id, text="Я отвечаю только тем кто пришел ко мне по QR-коду с колоды")
+        return
+
+    await bot.send_message(chat_id=user_tg_id,
+                           text="Приветсвую! Я бот-помощник к вашей колоде)\nСкоро у меня появится много нового функционала!")
+
+    events = await sync_to_async(TgEvent.objects.filter)(
+        type=TgEventType.start_event
+    )
+    events_list = await sync_to_async(list)(events)
+    await run_events(user_tg_id, events_list)

@@ -1,12 +1,14 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
+from model_utils.managers import InheritanceManager
+
+
+class TgEventType(models.TextChoices):
+    start_event = "START", "Start event"
 
 
 class TgEvent(models.Model):
-    class TgEventType(models.TextChoices):
-        start_event = "START", "Start event"
-
     message = models.OneToOneField(
         to="core.Message",
         on_delete=models.PROTECT
@@ -22,10 +24,15 @@ class TgEvent(models.Model):
 
 
 class Message(models.Model):
-    pass
+    objects = InheritanceManager()
 
 
 class InlineMessage(Message):
+    text = models.TextField(
+        max_length=2048,
+        verbose_name="текст",
+        default="",
+    )
     image = models.ImageField(
         upload_to='images/inline_messages',
         null=True,
@@ -59,6 +66,7 @@ class InlineButton(models.Model):
     )
     inline_message = models.ForeignKey(
         "core.InlineMessage",
+        related_name="inline_buttons",
         null=True,
         on_delete=models.CASCADE
     )
@@ -66,6 +74,9 @@ class InlineButton(models.Model):
     class Meta:
         verbose_name = "инлайн кнопка"
         verbose_name_plural = "инлайн кнопки"
+
+    def __str__(self):
+        return self.text[:min(15, len(self.text))]
 
 
 class BotMessage(Message):
@@ -99,13 +110,17 @@ class BotMessage(Message):
         verbose_name = "сообщение бота"
         verbose_name_plural = "сообщения бота"
 
+    def __str__(self):
+        return self.text[:min(15, len(self.text))]
+
+
+class Role(models.TextChoices):
+    AUTHORIZED = 'AUTHORIZED'
+    ADMIN = 'ADMIN'
+    ANONIM = 'ANONIM'
+
 
 class CustomUser(AbstractUser):
-    class Role(models.TextChoices):
-        AUTHORIZED = 'AUTHORIZED'
-        ADMIN = 'ADMIN'
-        ANONIM = 'ANONIM'
-
     tg_id = models.BigIntegerField(
         unique=True,
         verbose_name="id из тг",

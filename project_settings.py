@@ -19,6 +19,3 @@ DB_PORT: int = getenv("DB_PORT", 5432)
 DB_NAME: str = getenv("DB_NAME", "tg_constructor")
 DB_USERNAME: str = getenv("DB_USERNAME", "tg_constructor")
 DB_PASSWORD: str = getenv("DB_PASSWORD", "123")
-
-# admin login whitelist
-ADMINS: list[str] = getenv("ADMINS")

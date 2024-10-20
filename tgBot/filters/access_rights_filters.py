@@ -4,10 +4,12 @@ from aiogram import types
 from aiogram.filters import Filter
 from django.contrib.auth import get_user_model
 
+from core.models import Role
+
 User = get_user_model()
 
 
-def create_user_by_message(message: types.Message, role=User.Role.ANONIM):
+def create_user_by_message(message: types.Message, role=Role.ANONIM):
     try:
         return User.objects.create(
             tg_id=message.from_user.id,
@@ -27,14 +29,14 @@ class AnyUserFilter(Filter):
 
 
 class CustomUserFilter(Filter):
-    available: Union[User.Role, list]
+    available: Union[Role, list]
 
-    def __init__(self, available: Union[User.Role, list]):
+    def __init__(self, available: Union[Role, list]):
         self.available = available
 
     async def check(self, message: types.Message) -> bool:
         user = create_user_by_message(message)
-        if isinstance(self.available, User.Role):
+        if isinstance(self.available, Role):
             return user.role == self.available
         else:
             return user.role in self.available
@@ -43,4 +45,4 @@ class CustomUserFilter(Filter):
 class NotAnonimUserFilter(Filter):
     async def check(self, message: types.Message) -> bool:
         user = create_user_by_message(message)
-        return user is not None and user.role != User.Role.ANONIM
+        return user is not None and user.role != Role.ANONIM
