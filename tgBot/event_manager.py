@@ -22,11 +22,11 @@ async def send_inline_message(chat_id, message: InlineMessage):
     builder = InlineKeyboardBuilder()
     buttons = await sync_to_async(message.inline_buttons.all)()
     buttons_list = await sync_to_async(list)(buttons)
-    for button in buttons:
+    for button in buttons_list:
         button: InlineButton
         builder.row(types.InlineKeyboardButton(
             text=await sync_to_async(lambda: button.text)(),
-            callback_data="random_value"
+            callback_data=f"inline_button_{button.id}"
         ))
     await bot.send_message(
         chat_id=chat_id,
@@ -36,18 +36,15 @@ async def send_inline_message(chat_id, message: InlineMessage):
 
 
 async def send_message(chat_id, message: Message):
-    print('asd')
     if isinstance(message, BotMessage):
-        print('asd2')
         await send_bot_message(chat_id, message)
     if isinstance(message, InlineMessage):
-        print('asd3')
         await send_inline_message(chat_id, message)
 
 
 async def run_events(chat_id, events: list[TgEvent]):
-    print(len(events))
+    if not events:
+        return
     for event in events:
         message = await sync_to_async(lambda: Message.objects.select_subclasses().get(id=event.message.id))()
-        print(message)
         await send_message(chat_id, message)

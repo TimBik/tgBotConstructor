@@ -1,10 +1,11 @@
 from django.contrib import admin
 
-from core.models import BotMessage, InlineMessage, InlineButton, CustomUser, TgEvent
+from core.models import BotMessage, InlineMessage, InlineButton, CustomUser, TgEvent, Message
 
 
 @admin.register(BotMessage)
 class BotMessageAdmin(admin.ModelAdmin):
+    search_fields = ('name',)
     list_display = (
         "id",
         "limit_text",
@@ -17,9 +18,24 @@ class BotMessageAdmin(admin.ModelAdmin):
     def limit_text(self, obj):
         return obj.text[:min(15, len(obj.text))]
 
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "limit_text",
+    )
+    search_fields = ('text',)
+    readonly_fields = (
+        'created',
+        'modified',
+    )
+    def limit_text(self, obj):
+        return obj.text[:min(15, len(obj.text))]
+
 
 @admin.register(InlineMessage)
 class InlineMessageAdmin(admin.ModelAdmin):
+    search_fields = ('text',)
     list_display = (
         "id",
         "limit_text",

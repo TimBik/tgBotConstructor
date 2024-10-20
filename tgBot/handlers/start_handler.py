@@ -33,12 +33,12 @@ async def cmd_start(message: types.Message):
     if user.role == Role.ADMIN:
         await bot.send_message(chat_id=user_tg_id, text=f"Приветствую админа {user.username}")
         return
-    if not (" " in message.text and message.text.split()[1] == "by_qr"):
-        await bot.send_message(chat_id=user_tg_id, text="Я отвечаю только тем кто пришел ко мне по QR-коду с колоды")
-        return
+    # if not (" " in message.text and message.text.split()[1] == "by_qr"):
+    #     await bot.send_message(chat_id=user_tg_id, text="Я отвечаю только тем кто пришел ко мне по QR-коду с колоды")
+    #     return
+    # await bot.send_message(chat_id=user_tg_id,
+    #                        text="Приветсвую! Я бот-помощник к вашей колоде)\nСкоро у меня появится много нового функционала!")
 
-    await bot.send_message(chat_id=user_tg_id,
-                           text="Приветсвую! Я бот-помощник к вашей колоде)\nСкоро у меня появится много нового функционала!")
 
     events = await sync_to_async(TgEvent.objects.filter)(
         type=TgEventType.start_event

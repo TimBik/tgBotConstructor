@@ -25,18 +25,16 @@ class TgEvent(models.Model):
 
 class Message(models.Model):
     objects = InheritanceManager()
-
-
-class InlineMessage(Message):
     text = models.TextField(
         max_length=2048,
         verbose_name="текст",
         default="",
     )
     image = models.ImageField(
-        upload_to='images/inline_messages',
+        upload_to='images',
         null=True,
         blank=True,
+        default=None,
     )
     created = models.DateTimeField(
         default=timezone.now,
@@ -47,27 +45,26 @@ class InlineMessage(Message):
         verbose_name="обновлено"
     )
 
+
+class InlineMessage(Message):
     class Meta:
         verbose_name = "инлайн сообщение бота"
         verbose_name_plural = "инлайн сообщения бота"
 
 
 class InlineButton(models.Model):
-    class InlineButtonType(models.TextChoices):
-        next_inline_message = 'NEXT_INLINE_MESSAGE'
-        next_bot_message = 'NEXT_BOT_MESSAGE'
-
     text = models.CharField(max_length=64)
-    type = models.CharField(
-        choices=InlineButtonType.choices,
-        max_length=64,
-        null=True,
-        blank=True,
-    )
     inline_message = models.ForeignKey(
         "core.InlineMessage",
         related_name="inline_buttons",
         null=True,
+        on_delete=models.CASCADE
+    )
+    next_event = models.ForeignKey(
+        "core.TgEvent",
+        related_name="inline_buttons",
+        null=True,
+        blank=True,
         on_delete=models.CASCADE
     )
 
@@ -80,30 +77,11 @@ class InlineButton(models.Model):
 
 
 class BotMessage(Message):
-    text = models.TextField(
-        max_length=2048,
-        verbose_name="текст",
-        default="",
-    )
-    image = models.ImageField(
-        upload_to='images/bot_messages',
-        null=True,
-        blank=True,
-        default=None,
-    )
     file = models.FileField(
         upload_to='files/bot_messages',
         null=True,
         blank=True,
         default=None,
-    )
-    created = models.DateTimeField(
-        default=timezone.now,
-        verbose_name="создано"
-    )
-    modified = models.DateTimeField(
-        default=timezone.now,
-        verbose_name="обновлено"
     )
 
     class Meta:
