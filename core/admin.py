@@ -33,8 +33,14 @@ class MessageAdmin(admin.ModelAdmin):
         return obj.text[:min(15, len(obj.text))]
 
 
+
+class InlineButtonInline(admin.TabularInline):  # или admin.StackedInline для вертикального отображения
+    model = InlineButton
+    extra = 0  # Количество пустых форм для добавления новых кнопок
+
 @admin.register(InlineMessage)
 class InlineMessageAdmin(admin.ModelAdmin):
+    inlines = [InlineButtonInline]
     search_fields = ('text',)
     list_display = (
         "id",
@@ -61,4 +67,7 @@ class CustomUserAdmin(admin.ModelAdmin):
 
 @admin.register(TgEvent)
 class TgEventAdmin(admin.ModelAdmin):
-    pass
+    fields = (
+        "message",
+        "type",
+    )

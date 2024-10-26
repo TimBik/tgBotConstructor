@@ -8,7 +8,21 @@ class TgEventType(models.TextChoices):
     start_event = "START", "Start event"
 
 
-class TgEvent(models.Model):
+class TimeStampedMixin(models.Model):
+    created = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="создано"
+    )
+    modified = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="обновлено"
+    )
+
+    class Meta:
+        abstract = True
+
+
+class TgEvent(TimeStampedMixin):
     message = models.OneToOneField(
         to="core.Message",
         on_delete=models.PROTECT
@@ -23,7 +37,7 @@ class TgEvent(models.Model):
     )
 
 
-class Message(models.Model):
+class Message(TimeStampedMixin):
     objects = InheritanceManager()
     text = models.TextField(
         max_length=2048,
@@ -35,14 +49,6 @@ class Message(models.Model):
         null=True,
         blank=True,
         default=None,
-    )
-    created = models.DateTimeField(
-        default=timezone.now,
-        verbose_name="создано"
-    )
-    modified = models.DateTimeField(
-        default=timezone.now,
-        verbose_name="обновлено"
     )
 
 
