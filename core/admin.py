@@ -16,7 +16,7 @@ class BotMessageAdmin(admin.ModelAdmin):
     )
 
     def limit_text(self, obj):
-        return obj.text[:min(15, len(obj.text))]
+        return obj.text[:min(20, len(obj.text))]
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
@@ -30,7 +30,7 @@ class MessageAdmin(admin.ModelAdmin):
         'modified',
     )
     def limit_text(self, obj):
-        return obj.text[:min(15, len(obj.text))]
+        return obj.text[:min(20, len(obj.text))]
 
 
 
@@ -52,7 +52,7 @@ class InlineMessageAdmin(admin.ModelAdmin):
     )
 
     def limit_text(self, obj):
-        return obj.text[:min(15, len(obj.text))]
+        return obj.text[:min(20, len(obj.text))]
 
 
 @admin.register(InlineButton)

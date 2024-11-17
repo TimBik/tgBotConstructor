@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.paginator import Paginator
 from django.db import models
 from django.utils import timezone
 from model_utils.managers import InheritanceManager
@@ -53,6 +54,13 @@ class Message(TimeStampedMixin):
 
 
 class InlineMessage(Message):
+    update_message = models.BooleanField(
+        default=True,
+        verbose_name="обновить сообщение",
+        help_text="обновить это сообщение при переходе"
+    )
+    paginator = Paginator()
+
     class Meta:
         verbose_name = "инлайн сообщение бота"
         verbose_name_plural = "инлайн сообщения бота"
@@ -79,12 +87,12 @@ class InlineButton(models.Model):
         verbose_name_plural = "инлайн кнопки"
 
     def __str__(self):
-        return self.text[:min(15, len(self.text))]
+        return self.text[:min(20, len(self.text))]
 
 
 class BotMessage(Message):
     file = models.FileField(
-        upload_to='files/bot_messages',
+        upload_to='files',
         null=True,
         blank=True,
         default=None,
@@ -95,7 +103,7 @@ class BotMessage(Message):
         verbose_name_plural = "сообщения бота"
 
     def __str__(self):
-        return self.text[:min(15, len(self.text))]
+        return self.text[:min(20, len(self.text))]
 
 
 class Role(models.TextChoices):

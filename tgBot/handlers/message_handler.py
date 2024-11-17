@@ -25,4 +25,4 @@ async def message_handler(callback: CallbackQuery):
     next_event = await sync_to_async(
         lambda: inline_button.next_event
     )()
-    await run_events(user_id, [next_event])
+    await run_events(user_id, [next_event], callback)
