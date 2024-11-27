@@ -41,7 +41,7 @@ class TgEvent(TimeStampedMixin):
 class Message(TimeStampedMixin):
     objects = InheritanceManager()
     text = models.TextField(
-        max_length=2048,
+        max_length=4096,
         verbose_name="текст",
         default="",
     )
@@ -59,14 +59,14 @@ class InlineMessage(Message):
         verbose_name="обновить сообщение",
         help_text="обновить это сообщение при переходе"
     )
-    paginator = Paginator()
+    is_paginate = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "инлайн сообщение бота"
         verbose_name_plural = "инлайн сообщения бота"
 
 
-class InlineButton(models.Model):
+class InlineButton(TimeStampedMixin):
     text = models.CharField(max_length=64)
     inline_message = models.ForeignKey(
         "core.InlineMessage",

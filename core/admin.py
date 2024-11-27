@@ -18,6 +18,7 @@ class BotMessageAdmin(admin.ModelAdmin):
     def limit_text(self, obj):
         return obj.text[:min(20, len(obj.text))]
 
+
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
     list_display = (
@@ -29,14 +30,16 @@ class MessageAdmin(admin.ModelAdmin):
         'created',
         'modified',
     )
+
     def limit_text(self, obj):
         return obj.text[:min(20, len(obj.text))]
 
 
-
 class InlineButtonInline(admin.TabularInline):  # или admin.StackedInline для вертикального отображения
+    exclude = ["created", "modified"]
     model = InlineButton
     extra = 0  # Количество пустых форм для добавления новых кнопок
+
 
 @admin.register(InlineMessage)
 class InlineMessageAdmin(admin.ModelAdmin):

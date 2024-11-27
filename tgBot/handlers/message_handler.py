@@ -1,3 +1,5 @@
+import json
+
 from aiogram import types, F
 from aiogram.types import CallbackQuery
 from aiogram.utils.callback_answer import CallbackAnswer
@@ -17,7 +19,9 @@ async def message_handler(msg: types.Message):
 @dp.callback_query()
 async def message_handler(callback: CallbackQuery):
     user_id = callback.from_user.id
-    inline_button_id = callback.data.removeprefix("inline_button_")
+    print(callback.data)
+    data = json.loads(callback.data)
+    inline_button_id = data['button_id']
     inline_button = await sync_to_async(
         InlineButton.objects.get
     )(id=inline_button_id)
@@ -25,4 +29,4 @@ async def message_handler(callback: CallbackQuery):
     next_event = await sync_to_async(
         lambda: inline_button.next_event
     )()
-    await run_events(user_id, [next_event], callback)
+    await run_events(user_id, [next_event], callback, data)
