@@ -119,7 +119,7 @@ class CustomUser(AbstractUser):
     )
     role = models.CharField(
         max_length=20,
-        choices=Role,
+        choices=Role.choices,
         default=Role.ANONIM,
         verbose_name="роль пользователя"
     )
