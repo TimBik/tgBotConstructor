@@ -40,8 +40,8 @@ async def get_builder(message, data):
     builder = InlineKeyboardBuilder()
     buttons = await sync_to_async(message.inline_buttons.all)()
     buttons = await sync_to_async(buttons.order_by)("created")
-    print(f"{buttons.__dict__=}")
     buttons_list = await sync_to_async(list)(buttons)
+    print(f"{buttons_list=}")
 
     if message.is_paginate:
         page = data['page']
@@ -112,7 +112,7 @@ async def send_inline_message(chat_id, message: InlineMessage, call_back: Callba
         )
     elif message.update_message:
         await bot.edit_message_text(
-            chat_id=call_back.message.chat.id,
+            chat_id=call_back.id,
             message_id=call_back.message.message_id,
             text=message.text,
             parse_mode=parse_mode,

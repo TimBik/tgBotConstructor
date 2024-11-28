@@ -26,10 +26,6 @@ class MessageAdmin(admin.ModelAdmin):
         "limit_text",
     )
     search_fields = ('text',)
-    readonly_fields = (
-        'created',
-        'modified',
-    )
 
     def limit_text(self, obj):
         return obj.text[:min(20, len(obj.text))]
@@ -60,7 +56,7 @@ class InlineMessageAdmin(admin.ModelAdmin):
 
 @admin.register(InlineButton)
 class InlineButtonAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("id", "text",)
 
 
 @admin.register(CustomUser)
