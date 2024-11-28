@@ -3,5 +3,5 @@ Pillow==10.4.0
 aiogram==3.13.1
 python-dotenv==1.0.1
 StrEnum==0.4.15
-Django==5.1.2
+Django==4.2.16
 django-model-utils==5.0.0
