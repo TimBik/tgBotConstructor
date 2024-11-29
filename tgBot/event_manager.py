@@ -95,7 +95,7 @@ async def get_builder(message, data):
     return builder
 
 
-async def send_inline_message(chat_id, message: InlineMessage, call_back: CallbackQuery, data, parse_mode="HTML"):
+async def send_inline_message(chat_id, message: InlineMessage, call_back: CallbackQuery, data: dict[str], parse_mode="HTML"):
     try:
         builder = await get_builder(message, data)
     except InvalidPageException:
@@ -112,7 +112,7 @@ async def send_inline_message(chat_id, message: InlineMessage, call_back: Callba
         )
     elif message.update_message:
         await bot.edit_message_text(
-            chat_id=call_back.id,
+            chat_id=call_back.message.chat.id,
             message_id=call_back.message.message_id,
             text=message.text,
             parse_mode=parse_mode,
