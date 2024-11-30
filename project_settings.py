@@ -5,10 +5,10 @@ import ast
 load_dotenv()
 
 
-def getenv(name, default=None):
+def getenv(name, default=None, is_str=True):
     obj = os.getenv(name, default)
-    if isinstance(obj, list):
-        return ast.literal_eval(obj)
+    if not is_str:
+        obj = ast.literal_eval(obj)
     return obj
 
 
@@ -19,4 +19,5 @@ DB_PORT: int = getenv("DB_PORT", 5432)
 DB_NAME: str = getenv("DB_NAME", "tg_constructor")
 DB_USERNAME: str = getenv("DB_USERNAME", "tg_constructor")
 DB_PASSWORD: str = getenv("DB_PASSWORD", "123")
-ALLOWED_HOST: str = getenv("ALLOWED_HOST", [])
+ALLOWED_HOST: list[str] = getenv("ALLOWED_HOST", [], is_str=False)
+print(ALLOWED_HOST)
