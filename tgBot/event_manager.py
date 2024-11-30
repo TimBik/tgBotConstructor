@@ -16,8 +16,8 @@ from tgBot.app import bot
 # }
 
 async def send_bot_message(chat_id, message: BotMessage):
-    photo = await sync_to_async(lambda: message.image)()
-    file = await sync_to_async(lambda: message.file)()
+    photo = message.image
+    file = message.file
     if photo:
         await bot.send_photo(
             chat_id=chat_id,
@@ -38,18 +38,17 @@ async def send_bot_message(chat_id, message: BotMessage):
 
 async def get_builder(message, data):
     builder = InlineKeyboardBuilder()
-    buttons = await sync_to_async(message.inline_buttons.all)()
-    buttons = await sync_to_async(buttons.order_by)("created")
+    buttons = await sync_to_async(message.inline_buttons.order_by)("created")
     buttons_list = await sync_to_async(list)(buttons)
-    print(f"{buttons_list=}")
 
     if message.is_paginate:
         page = data['page']
-        if page == -1 or page * 6 >= len(buttons_list):
+        pg_count = DefaultInlineButtonPaginator.count
+        if page == -1 or page * pg_count >= len(buttons_list):
             raise InvalidPageException()
-        end = min(page * 6 + 6, len(buttons_list))
+        end = min(page * pg_count + pg_count, len(buttons_list))
 
-        for i in range(page * 6, end, 2):
+        for i in range(page * pg_count, end, 2):
             buttons_row = []
             button1: InlineButton = buttons_list[i]
             buttons_row.append(
@@ -95,13 +94,14 @@ async def get_builder(message, data):
     return builder
 
 
-async def send_inline_message(chat_id, message: InlineMessage, call_back: CallbackQuery, data: dict[str], parse_mode="HTML"):
+async def send_inline_message(chat_id, message: InlineMessage, call_back: CallbackQuery, data: dict[str],
+                              parse_mode="HTML"):
     try:
         builder = await get_builder(message, data)
     except InvalidPageException:
         await call_back.answer()
         return
-    photo = await sync_to_async(lambda: message.image)()
+    photo = message.image
     if photo:
         await bot.send_photo(
             chat_id=chat_id,
