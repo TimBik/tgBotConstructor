@@ -1,12 +1,12 @@
 services:
   db:
     image: postgres
-    container_name: db_container_name
+    container_name: db_container
     networks:
       - my_private_network
     environment:
       POSTGRES_USER: taro_bot
-      POSTGRES_PASSWORD: 123
+      POSTGRES_PASSWORD: your_password
       POSTGRES_DB: taro_bot_bd
     volumes:
       - db_data:/var/lib/postgresql/data
@@ -14,7 +14,7 @@ services:
   bot:
     build:
       context: .
-    container_name: tg_bot
+    container_name: bot_container
     networks:
       - my_private_network
     depends_on:
@@ -22,7 +22,8 @@ services:
     command: python manage.py run_tg_bot
 
 networks:
-  bot_network:
+  my_private_network:  # Определяем сеть
+    driver: bridge
 
 volumes:
   db_data:
