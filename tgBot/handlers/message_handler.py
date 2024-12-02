@@ -13,7 +13,7 @@ from tgBot.event_manager import run_events
 @dp.message(F.text)
 async def message_handler(msg: types.Message):
     user_id = msg.from_user.id
-    await bot.send_message(chat_id=user_id, text=msg.text)
+    await bot.send_message(chat_id=user_id, text="Извините, я вас не понимаю \nПожалуйста воспользуйтесь меню")
 
 
 @dp.callback_query()
