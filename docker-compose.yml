@@ -19,11 +19,46 @@ services:
       - my_private_network
     depends_on:
       - db
-    command: python manage.py run_tg_bot
-
+    command: >
+      sh -c "python manage.py migrate &&
+            python manage.py run_tg_bot"
+  django:
+    build:
+      context: .
+    container_name: django_container
+    networks:
+      - my_private_network
+    depends_on:
+      - db
+    environment:
+      DJANGO_SUPERUSER_USERNAME: admin
+      DJANGO_SUPERUSER_PASSWORD: admin_password
+      DJANGO_SUPERUSER_EMAIL: admin@example.com
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py createsuperuser --noinput &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - static_data:/app/static
+      - media_data:/app/media
+  nginx:
+    image: nginx:latest
+    container_name: nginx_container
+    networks:
+      - my_private_network
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - static_data:/app/static
+      - media_data:/app/media
+      -
 networks:
-  my_private_network:  # Определяем сеть
+  my_private_network: # Определяем сеть
     driver: bridge
 
 volumes:
   db_data:
+  static_data:
+  media_data:
