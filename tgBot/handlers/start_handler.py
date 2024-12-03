@@ -18,8 +18,8 @@ async def get_or_create_user(message: types.Message):
         defaults={
             "tg_id": message.from_user.id,
             "username": message.from_user.username,
-            "first_name": message.from_user.first_name,
-            "last_name": message.from_user.last_name,
+            "first_name": message.from_user.first_name ,
+            "last_name": message.from_user.last_name if message.from_user.last_name else "",
             "role": Role.AUTHORIZED,
         }
     )
