@@ -34,7 +34,6 @@ services:
       DJANGO_SUPERUSER_USERNAME: admin
       DJANGO_SUPERUSER_PASSWORD: admin_password
       DJANGO_SUPERUSER_EMAIL: admin@example.com
-      DJANGO_SUPERUSER_TG_ID: 1234
     command: >
       sh -c "python manage.py migrate &&
              python manage.py createsuperuser --noinput &&

@@ -115,6 +115,7 @@ class Role(models.TextChoices):
 class CustomUser(AbstractUser):
     tg_id = models.BigIntegerField(
         unique=True,
+        null=True,
         verbose_name="id из тг",
     )
     role = models.CharField(
