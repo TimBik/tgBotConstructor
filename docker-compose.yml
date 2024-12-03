@@ -53,7 +53,6 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - static_data:/app/static
       - media_data:/app/media
-      -
 networks:
   my_private_network: # Определяем сеть
     driver: bridge
