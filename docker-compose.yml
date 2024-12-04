@@ -22,14 +22,13 @@ services:
       DJANGO_SUPERUSER_USERNAME: admin
       DJANGO_SUPERUSER_PASSWORD: admin_password
       DJANGO_SUPERUSER_EMAIL: admin@example.com
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py run_tg_bot & &&
-             python manage.py createsuperuser --noinput &&
-             python manage.py runserver 0.0.0.0:8000"
     volumes:
       - static_data:/app/static
       - media_data:/app/media
+    ports:
+      - "8000:8000"  # Добавьте порты для Django (и других сервисов, если нужно)
+    command: /usr/bin/supervisord  # Убедитесь, что это точка старта для supervisord
+    restart: always
   nginx:
     image: nginx:latest
     container_name: nginx_container
