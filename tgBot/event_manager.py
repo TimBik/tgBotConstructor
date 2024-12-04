@@ -22,7 +22,7 @@ async def send_bot_message(chat_id, message: BotMessage):
         await bot.send_photo(
             chat_id=chat_id,
             caption=message.text,
-            photo=FSInputFile(f"{photo.name}")
+            photo=FSInputFile(f"media/{photo.name}")
         )
     else:
         await bot.send_message(
@@ -32,7 +32,7 @@ async def send_bot_message(chat_id, message: BotMessage):
     if file:
         await bot.send_document(
             chat_id=chat_id,
-            document=FSInputFile(f"{file.name}")
+            document=FSInputFile(f"media/{file.name}")
         )
 
 
@@ -108,7 +108,7 @@ async def send_inline_message(chat_id, message: InlineMessage, call_back: Callba
                 chat_id=chat_id,
                 message_id=call_back.message.message_id,
                 reply_markup=builder.as_markup(),
-                media=InputMediaPhoto(media=FSInputFile(f"{photo.name}"),
+                media=InputMediaPhoto(media=FSInputFile(f"media/{photo.name}"),
                                       caption=message.text,
                                       reply_markup=builder.as_markup(),
                                       )
@@ -119,7 +119,7 @@ async def send_inline_message(chat_id, message: InlineMessage, call_back: Callba
                 caption=message.text,
                 parse_mode=parse_mode,
                 reply_markup=builder.as_markup(),
-                photo=FSInputFile(f"{photo.name}")
+                photo=FSInputFile(f"media/{photo.name}")
             )
     elif message.update_message:
         await bot.edit_message_text(
