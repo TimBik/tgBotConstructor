@@ -25,8 +25,8 @@ services:
     volumes:
       - static_data:/app/static
       - media_data:/app/media
-    ports:
-      - "8000:8000"  # Добавьте порты для Django (и других сервисов, если нужно)
+#    ports:
+#      - "8000:8000"  # Добавьте порты для Django (и других сервисов, если нужно)
     command: /usr/bin/supervisord  # Убедитесь, что это точка старта для supervisord
     restart: always
   nginx:
