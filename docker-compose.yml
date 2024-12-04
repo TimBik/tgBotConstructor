@@ -10,19 +10,7 @@ services:
       POSTGRES_DB: taro_bot_bd
     volumes:
       - db_data:/var/lib/postgresql/data
-
-  bot:
-    build:
-      context: .
-    container_name: bot_container
-    networks:
-      - my_private_network
-    depends_on:
-      - db
-    command: >
-      sh -c "python manage.py migrate &&
-            python manage.py run_tg_bot"
-  django:
+  bot_and_django:
     build:
       context: .
     container_name: django_container
@@ -36,6 +24,7 @@ services:
       DJANGO_SUPERUSER_EMAIL: admin@example.com
     command: >
       sh -c "python manage.py migrate &&
+             python manage.py run_tg_bot &&
              python manage.py createsuperuser --noinput &&
              python manage.py runserver 0.0.0.0:8000"
     volumes:
