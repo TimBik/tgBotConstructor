@@ -49,5 +49,5 @@ async def cmd_start(message: types.Message):
         await run_events(user_tg_id, events_list)
     except Exception as e:
         if MY_TG_ID:
-            await bot.send_message(chat_id=MY_TG_ID, text=e)
+            await bot.send_message(chat_id=MY_TG_ID, text=str(e))
         logger.exception(e)

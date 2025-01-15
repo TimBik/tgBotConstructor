@@ -37,5 +37,5 @@ async def message_handler(callback: CallbackQuery):
         await run_events(user_id, [next_event], callback, data)
     except Exception as e:
         if MY_TG_ID:
-            await bot.send_message(chat_id=MY_TG_ID, text=e)
+            await bot.send_message(chat_id=MY_TG_ID, text=str(e))
         logger.exception(e)
