@@ -16,11 +16,12 @@ logger = get_logging(__name__)
 
 
 async def get_or_create_user(message: types.Message):
+    username=  message.from_user.username
     user, _ = await sync_to_async(User.objects.get_or_create)(
         tg_id=message.from_user.id,
         defaults={
             "tg_id": message.from_user.id,
-            "username": message.from_user.username if message.from_user.username else "",
+            "username": username if username and  username != "" else f"tg_id_{message.from_user.id}",
             "first_name": message.from_user.first_name if message.from_user.first_name else "",
             "last_name": message.from_user.last_name if message.from_user.last_name else "",
             "role": Role.AUTHORIZED,
